@@ -91,7 +91,6 @@ class Safe
         return base64_decode($data);
     }
 
-
-
+    
 
 }

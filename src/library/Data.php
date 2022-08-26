@@ -260,4 +260,45 @@ final class Data
         return $tree;
     }
 
+    /**
+     * 将list_to_tree的树还原成列表
+     * @param  array $tree  原来的树
+     * @param  string $child 孩子节点的键
+     * @param  string $order 排序显示的键，一般是主键 升序排列
+     * @param  array  $list  过渡用的中间数组，
+     * @return array        返回排过序的列表数组
+     */
+    function treeTolist($tree, $child = '_child', $order='id', &$list = array()){
+        if(is_array($tree)) {
+            foreach ($tree as $key => $value) {
+                $reffer = $value;
+                if(isset($reffer[$child])){
+                    unset($reffer[$child]);
+                    tree_to_list($value[$child], $child, $order, $list);
+                }
+                $list[] = $reffer;
+            }
+            $list = list_sort_by($list, $order, $sortby='asc');
+        }
+        return $list;
+    }
+
+    /**
+     * 将list_to_tree的树还原成列表
+     * @param  array $tree  原来的树
+     * @return array 返回列表数组
+     */
+    function treeToArray($tree){
+        static $arr = [];
+        foreach($tree as $val){
+            $arr[] = ['id'=>$val['id'],'name'=>$val['name'],'pid'=>$val['pid']];
+            if(isset($val['_child']) && !empty($val['_child'])){
+                treeToArray($val['_child']);
+            }
+        }
+        return $arr;
+    }
+
+
+
 }

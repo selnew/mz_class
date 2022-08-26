@@ -171,6 +171,105 @@ class DTime
             strftime($format, strtotime("-{$lastNSunday} day", $ts))
         );
     }
+
+    /**
+     * 时间戳转换话术
+     *
+     * @param integer $time 时间戳
+     * @return void
+     */
+    function commentTime($time=0) {
+        //$time = strtotime($time);
+        $nowTime = time();
+        $message = '';
+        if(empty($time)) {
+            $message='很早以前';
+            return $message;
+        }
+        //一年前
+        $year = idate ( 'Y', $nowTime ) - idate ( 'Y', $time );
+        if ($year>0) {
+            if($year==1){
+                $message = "1年前";
+            }else{
+                  $message = date ( 'Y.m.d', $time );
+            }
+        }else{
+            //同一年
+            $days = idate ( 'z', $nowTime ) - idate ( 'z', $time );
+            switch(true){
+                //一天内
+                case (0 == $days):
+                    $seconds = $nowTime - $time;
+                    //一小时内
+                    if ($seconds < 3600) {
+                        //一分钟内
+                        if ($seconds < 60) {
+                            $message = '刚刚';
+                        }else{
+                            $message = intval ( $seconds / 60 ) . '分钟前';
+                        }
+                    }else{
+                        $message = idate ( 'H', $nowTime ) - idate ( 'H', $time ) . '小时前';
+                    }
+                    break;
+                    //昨天
+                case (1 == $days):
+                    $message = '昨天' . date ( 'H:i', $time );
+                    break;
+                    //前天
+                case (2 == $days):
+                    $message = '前天 ' . date ( 'H:i', $time );
+                    break;
+                    //7天内
+                case (7 > $days):
+                    $message = $days . '天前';
+                    break;
+                case (60 > $days):
+                    $message = '1月前';
+                    break;
+                case (120 > $days):
+                    $message = '3月前';
+                    break;
+                case (360 > $days):
+                    $message = '半年前';
+                    break;
+                default:
+                    $message = date ( 'n月j日 H:i', $time );
+                    break;
+            }
+        }
+        return $message;
+    }
+    
+    /**
+     * 校验两个时间戳误差值范围
+     *
+     * @param integer $timestamp    校验时间戳：客户端时间戳
+     * @param integer $minute       误差前后时间：默认前后3分钟
+     * @param integer $compare      比较时间戳：默认当前时间
+     * @return void bool
+     */
+    function compareMinute($timestamp=0, $minute=3, $compare=0)
+    {
+        // JAVA时间戳13位，PHP时间戳10位
+        $len = strlen($timestamp);
+        $timestamp = ($len > 10) ? substr($timestamp,0, 10) : $timestamp;
+
+        if($compare > 0) {
+            $cLen = strlen($compare);
+            $time = ($cLen > 10) ? substr($compare,0, 10) : $compare;
+        } else {
+            $time = time();
+        }
+
+        $diff = 60 * $minute; // 差值
+
+        $minTime = $time - $diff;
+        $maxTime = $time + $diff;
+
+        return ($timestamp > $minTime && $timestamp < $maxTime) ? true : false;
+    }
     
     
 
