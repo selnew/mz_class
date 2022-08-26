@@ -6,6 +6,7 @@ namespace mzclass\library;
  *      Input           输入校验
  *      htmlTags        过滤防XSS注入
  *      checkSign       校验签名
+ *      regularVerify   正则验证
  * 
  * @author Mirze <mirzeAdv@163.com>
  */
