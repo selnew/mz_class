@@ -20,6 +20,7 @@ Out             格式化数据输出: 响应JSON
 Safe            安全：加密、解密、私钥
 FilterCheck     安全过滤校验
 Guid            生成码：唯一码，订单号
+Func            常用函数：common
 
 ~~~
 
@@ -27,5 +28,8 @@ Guid            生成码：唯一码，订单号
 ```
 // Arr
 use mzclass\library\Arr;
+
+// Func
+use mzclass\library\Func;
 
 ```
