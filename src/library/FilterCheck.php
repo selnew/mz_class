@@ -101,7 +101,7 @@ class FilterCheck
     function regularVerify($str='', $type='') {
         if('' == $str) return false;
 
-        $ruleArr=array(
+        $ruleArr = array(
             'require' => '/.+/',
             'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
             'url' => '/^http(s?):\/\/(?:[A-za-z0-9-]+\.)+[A-za-z]{2,4}(?:[\/\?#][\/=\?%\-&~`@[\]\':+!\.#\w]*)?$/',
@@ -118,6 +118,64 @@ class FilterCheck
             'amount' => '/^([1-9]\d{0,9}|0)(\.\d{1,2})?$/', // 金额：最多保留2位小数
         );
         $rule = array_key_exists($type, $ruleArr) ? $ruleArr[$type] : '';
+
+        if(preg_match($rule, $str)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 输出内容正则匹配校验
+     * 密码设计参考：https://vimsky.com/article/3603.html
+     *
+     * @param string $str       比较内容
+     * @param string $type      匹配类型规则KEY
+     * @param integer $minLen   最小长度：0 不限
+     * @param integer $maxLen   最大长度：0 不限
+     * @return void
+     * @Author Mirze
+     * @DateTime 2024-03-19
+     */
+    function regularInput($str='', $type='', $minLen=5, $maxLen=30) {
+        if('' == $str) return false;
+
+        // 规则前部配置
+        $ruleArr = array(
+            // 字母和数字_
+            '1' => '/^(?=.*\w)',
+            // 必须包含数字、字母
+            '2' => '/^(?=.*\d)(?=.*[a-zA-Z])',
+            // 必须包含数字、字母和符号
+            '3' => '/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@$%^&*])',
+            // 至少一个大写字母，一个小写字母，一个数字和一个特殊字符
+            '4' => '/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@$%^&*])',
+            // 包含至少一个小写字母、一个大写字母和一个数字。排除了所有的非字母数字字符，并忽略了大小写
+            '5' => '/^(?!.[\W_])(?=.[a-z])(?=.[A-Z])(?=.\d)',
+            // 必须含有大写字母、小写字母和数字
+            '6' => '/^(?=.*[A-Z])(?=.*[a-z])(?=.*d)',
+            // 匹配汉字: /^[u4e00-u9fa5]+$/
+            '7' => '/^(?=.*[u4e00-u9fa5])',
+        );
+        // 规则前部
+        $rule = array_key_exists($type, $ruleArr) ? $ruleArr[$type] : '';
+        if($rule == '') return false;
+
+        // 规则长度
+        if($minLen > 0) {
+            if($maxLen > 0) {
+                $rule .= '.{$minLen, $maxLen}';
+            } else {
+                $rule .= '.{$minLen, }';
+            }
+        } else {
+            if($maxLen > 0) {
+                $rule .= '.{, $maxLen}';
+            }
+        }
+        // 规则尾部
+        $rule .= '$/';
 
         if(preg_match($rule, $str)){
             return true;
