@@ -20,6 +20,19 @@ class Arr
         return $result;
     }
 
+    // 提取二维数组中某键值结果集返回
+    function swap_array_value($arr, $field='') {
+        if(empty($arr) || !is_array($arr) || ($field == '')) return $arr;
+
+        $result = array();
+        foreach ($arr as $k => $v) {
+            if(isset($v[$field])) {
+                $result[] = $v[$field];
+            }
+        }
+        return $result;
+    }
+
     // 单列表数据转换二级字段KEY数组集
     function swap_array_keys($arr, $field1='', $field2='') {
         if(empty($arr) || !is_array($arr) || ($field1 == '') || ($field2 == '')) return $arr;
