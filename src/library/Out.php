@@ -12,7 +12,8 @@ class Out
     static function object_to_array($obj){
         $arr = is_object($obj) ? get_object_vars($obj) : $obj;
         if(is_array($arr)){
-            return array_map(__FUNCTION__, $arr);
+            // return array_map(__FUNCTION__, $arr);
+            return array_map([__CLASS__, 'object_to_array'], $arr); // 同时支持static同$this
         }else{
             return $arr;
         }
@@ -21,7 +22,9 @@ class Out
     //数组转对象
     static function array_to_object($arr){
         if(is_array($arr)){
-            return (object) array_map(__FUNCTION__, $arr);
+            // return (object) array_map(__FUNCTION__, $arr);
+            // return (object) array_map([$this, 'array_to_object'], $arr);
+            return (object) array_map([__CLASS__, 'array_to_object'], $arr); // 同时支持static同$this
         }else{
             return $arr;
         }
