@@ -116,6 +116,7 @@ class FilterCheck
             'mobile' => '/^1[2-9]\d{9}$/',
             'birthday' => '/^(19|20)(\d){2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/',
             'amount' => '/^([1-9]\d{0,9}|0)(\.\d{1,2})?$/', // 金额：最多保留2位小数
+            'date' => '/^(1|2\d{3}-((0[1-9])|(1[0-2]))-((0[1-9])|([1-2][0-9])|(3([0|1]))))( (\d{2}):(\d{2}):(\d{2}))?$/', // 日期时间
         );
         $rule = array_key_exists($type, $ruleArr) ? $ruleArr[$type] : '';
 
@@ -157,6 +158,8 @@ class FilterCheck
             '6' => '/^(?=.*[A-Z])(?=.*[a-z])(?=.*d)',
             // 匹配汉字: /^[u4e00-u9fa5]+$/
             '7' => '/^(?=.*[u4e00-u9fa5])',
+            // 以字母开头，只能包含字符、数字和下划线
+            '8' => '/^[a-zA-Z](?=.*\w)',
         );
         // 规则前部
         $rule = array_key_exists($type, $ruleArr) ? $ruleArr[$type] : '';
@@ -165,13 +168,16 @@ class FilterCheck
         // 规则长度
         if($minLen > 0) {
             if($maxLen > 0) {
-                $rule .= '.{$minLen, $maxLen}';
+                // $rule .= '.{$minLen, $maxLen}';
+                $rule .= sprintf(".{%d,%d}", $minLen, $maxLen);
             } else {
-                $rule .= '.{$minLen, }';
+                // $rule .= '.{$minLen, }';
+                $rule .= sprintf(".{%d,}", $minLen);
             }
         } else {
             if($maxLen > 0) {
-                $rule .= '.{, $maxLen}';
+                // $rule .= '.{, $maxLen}';
+                $rule .= sprintf(".{,%d}", $maxLen);
             }
         }
         // 规则尾部
