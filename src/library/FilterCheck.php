@@ -161,12 +161,21 @@ class FilterCheck
             // 以字母开头，只能包含字符、数字和下划线
             '8' => '/^[a-zA-Z](?=.*\w)',
         );
+        // 最小长度占用减差
+        $diffArr = [
+            '8' => 1, // 以字母开头占1位，需minLen减去1位
+        ];
+
         // 规则前部
         $rule = array_key_exists($type, $ruleArr) ? $ruleArr[$type] : '';
         if($rule == '') return false;
 
         // 规则长度
         if($minLen > 0) {
+            if(array_key_exists($type, $diffArr)) {
+                $minLen = $minLen - $diffArr[$type];  // 最小长度占用减差
+            }
+
             if($maxLen > 0) {
                 // $rule .= '.{$minLen, $maxLen}';
                 $rule .= sprintf(".{%d,%d}", $minLen, $maxLen);
